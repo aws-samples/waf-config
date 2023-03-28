@@ -6,12 +6,7 @@ this can easily be deployed via cloudshell
 
 1. git clone git clone https://github.com/aws-samples/waf-config
 2. cd waf-config
-3. npm install
-4. cdk bootstrap
-5. cdk deploy 
-
-# Update CDK
-sudo npm install -g aws-cdk
-npm install
-cdk bootstrap
-cdk deploy
+3. sudo npm install -g aws-cdk
+4. npm install
+5. cdk bootstrap
+6. cdk deploy 
