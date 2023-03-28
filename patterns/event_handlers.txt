@@ -1,0 +1,6 @@
+ontoggle
+onauxclick
+ondblclick
+oncontextmenu
+onmouseleave
+ontouchcancel

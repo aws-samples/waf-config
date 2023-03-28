@@ -1,17 +1,17 @@
-## My Project
+# Description
+Demo project to show the use of cdk to deploy waf configurations.
 
-TODO: Fill this README out!
+# Deploy
+this can easily be deployed via cloudshell
 
-Be sure to:
+1. `git clone https://github.com/orgs/aws-samples/teams/team-wwps-israel-gov-sa`
+2. `cd team-wwps-israel-gov-sa`
+3. `npm install`
+4. `cdk bootstrap`
+5. `cdk deploy` 
 
-* Change the title in this README
-* Edit your repository description on GitHub
-
-## Security
-
-See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
-
-## License
-
-This project is licensed under the terms of the Apache 2.0 license. See `LICENSE`.
-Included AWS Lambda functions are licensed under the MIT-0 license. See `LICENSE-LAMBDA`.
+# Update CDK
+sudo npm install -g aws-cdk
+npm install
+cdk bootstrap
+cdk deploy

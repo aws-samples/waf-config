@@ -1,0 +1,17 @@
+href
+form
+script
+svg
+label
+input
+javascript
+embed
+iframe
+details
+img
+body
+html
+object
+isindex
+audio
+video
