@@ -63,7 +63,7 @@ export class CustomRuleGroups {
             .map(x => {
                 return new wafv2.CfnRuleGroup(scope, `RuleGroup${x.name}`, {
                     name: `RuleGroup${x.name}`,
-                    scope: "CLOUDFRONT",
+                    scope: "REGIONAL",
                     capacity: x.capacity,
                     rules: [
                         {
