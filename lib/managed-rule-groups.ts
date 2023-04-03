@@ -5,8 +5,8 @@ import { RegularExpressions } from './reqular-expressions';
 
 
 export class ManagedRuleGroups {
-    public static managedRuleGroups = [
-        { vendor: "AWS", name: "AWSManagedRulesCommonRuleSet" }
+    public static managedRuleGroups: wafv2.CfnWebACL.ManagedRuleGroupStatementProperty[] = [
+        { vendorName: "AWS", name: "AWSManagedRulesAmazonIpReputationList" }
     ]
 
     public static webAclRuleStatments(): wafv2.CfnWebACL.RuleProperty[] {
@@ -23,10 +23,7 @@ export class ManagedRuleGroups {
                     sampledRequestsEnabled: true
                 },
                 statement: {
-                    managedRuleGroupStatement: {
-                        vendorName: managedRuleGroup['vendor'],
-                        name: managedRuleGroup['name']
-                    }
+                    managedRuleGroupStatement: managedRuleGroup
                 }
             }
         }).value()
