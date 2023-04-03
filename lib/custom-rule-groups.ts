@@ -27,9 +27,17 @@ export class CustomRuleGroup {
 
 export class CustomRuleGroups {
     static basePriority = ManagedRuleGroups.managedRuleGroups.length
-
     private static ruleGroups(regexMap: { [key: string]: string; }) {
         return [
+            // Rate limit
+            new CustomRuleGroup("RateLimit", 55, {
+                rateBasedStatement: {
+                    limit: 7000,
+                    aggregateKeyType: "IP"
+                }
+            }, {
+                block: {}
+            }),
             // Challange out of country
             new CustomRuleGroup("ChallangeOutOfIsrael", 55, {
                 notStatement: {
@@ -44,8 +52,7 @@ export class CustomRuleGroups {
                     }
                 }
             }, {
-                challenge: {
-                }
+                challenge: {}
             }),
         ]
     }
@@ -56,7 +63,7 @@ export class CustomRuleGroups {
             .map(x => {
                 return new wafv2.CfnRuleGroup(scope, `RuleGroup${x.name}`, {
                     name: `RuleGroup${x.name}`,
-                    scope: "REGIONAL",
+                    scope: "CLOUDFRONT",
                     capacity: x.capacity,
                     rules: [
                         {

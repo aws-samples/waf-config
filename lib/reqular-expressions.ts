@@ -77,7 +77,7 @@ export class RegularExpressions {
         return _.chain(RegularExpressions.regex())
             .map(reg => {
                 let regex = new wafv2.CfnRegexPatternSet(scope, `RuleSet${reg.name}`, {
-                    scope: "REGIONAL",
+                    scope: "CLOUDFRONT",
                     name: reg.name,
                     regularExpressionList: reg.patterns
                 })

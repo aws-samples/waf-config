@@ -16,7 +16,7 @@ export class WafrStack extends cdk.Stack {
           CustomRuleGroups.webAclRuleStatments(this))
 
     new wafv2.CfnWebACL(this, "CdkAcl", {
-      scope: "REGIONAL",
+      scope: "CLOUDFRONT",
       defaultAction: {
         allow: {
         }
