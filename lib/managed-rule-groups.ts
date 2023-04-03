@@ -1,12 +1,12 @@
 import * as wafv2 from 'aws-cdk-lib/aws-wafv2';
-import { Construct } from 'constructs';
 import _ = require('lodash');
-import { RegularExpressions } from './reqular-expressions';
-
 
 export class ManagedRuleGroups {
     public static managedRuleGroups: wafv2.CfnWebACL.ManagedRuleGroupStatementProperty[] = [
-        { vendorName: "AWS", name: "AWSManagedRulesAmazonIpReputationList" }
+        { vendorName: "AWS", name: "AWSManagedRulesAmazonIpReputationList" },
+        { vendorName: "AWS", name: "AWSManagedRulesAnonymousIpList" },
+        { vendorName: "AWS", name: "AWSManagedRulesKnownBadInputsRuleSet" },
+        { vendorName: "AWS", name: "AWSManagedRulesCommonRuleSet" },
     ]
 
     public static webAclRuleStatments(): wafv2.CfnWebACL.RuleProperty[] {
@@ -14,17 +14,19 @@ export class ManagedRuleGroups {
             return {
                 name: "MR" + managedRuleGroup['name'],
                 priority: 0,
-                action: {
-                    block: {}
+                statement: {
+                    managedRuleGroupStatement: managedRuleGroup
+                },
+                overrideAction: {
+                    none: {
+                    }
                 },
                 visibilityConfig: {
                     cloudWatchMetricsEnabled: true,
                     metricName: "Metric" + managedRuleGroup['name'],
                     sampledRequestsEnabled: true
                 },
-                statement: {
-                    managedRuleGroupStatement: managedRuleGroup
-                }
+
             }
         }).value()
 
