@@ -13,7 +13,7 @@ export class ManagedRuleGroups {
         return _.chain(ManagedRuleGroups.managedRuleGroups).map(managedRuleGroup => {
             return {
                 name: "MR" + managedRuleGroup['name'],
-                priority: 0,
+                priority: ManagedRuleGroups.managedRuleGroups.indexOf(managedRuleGroup),
                 statement: {
                     managedRuleGroupStatement: managedRuleGroup
                 },
