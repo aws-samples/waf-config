@@ -1,7 +1,10 @@
+import * as wafv2 from 'aws-cdk-lib/aws-wafv2';
+import { Construct } from 'constructs';
 import * as fs from 'fs';
 import _ = require('lodash');
 
 export class RegularExpressions {
+
     public name: string;
     public patterns: string[];
     //https://hacken.io/discover/how-to-bypass-waf-hackenproof-cheat-sheet/
@@ -53,7 +56,7 @@ export class RegularExpressions {
         this.patterns = patterns
     }
 
-    public static regex(): RegularExpressions[] {
+    private static regex(): RegularExpressions[] {
         _.map(RegularExpressions.unixShell, (regexp) => {
 
         })
@@ -68,5 +71,20 @@ export class RegularExpressions {
             new RegularExpressions("PhpSystem", RegularExpressions.phpSystem),
         ]
 
+    }
+
+    public static defineRegularExpressions(scope: Construct): { [key: string]: string; } {
+        return _.chain(RegularExpressions.regex())
+            .map(reg => {
+                let regex = new wafv2.CfnRegexPatternSet(scope, `RuleSet${reg.name}`, {
+                    scope: "REGIONAL",
+                    name: reg.name,
+                    regularExpressionList: reg.patterns
+                })
+                return { key: reg.name, value: regex.attrArn }
+            })
+            .keyBy('key')
+            .mapValues('value')
+            .value()
     }
 }
