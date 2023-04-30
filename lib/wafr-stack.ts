@@ -15,18 +15,25 @@ export class WafrStack extends cdk.Stack {
         .concat(
           CustomRuleGroups.webAclRuleStatments(this))
 
-    new wafv2.CfnWebACL(this, "CdkAcl", {
-      scope: "REGIONAL",
-      defaultAction: {
-        allow: {
+    let webAclScope = this.node.tryGetContext('webAclScope') ? this.node.tryGetContext('webAclScope') : 'CLOUDFRONT'
+
+    console.log(webAclScope)
+
+
+    _.forEach(['REGIONAL', 'CLOUDFRONT'], webAclScope => {
+      new wafv2.CfnWebACL(this, `CdkAcl${webAclScope}`, {
+        scope: webAclScope,
+        defaultAction: {
+          allow: {
+          }
+        },
+        rules: ruleGroups,
+        visibilityConfig: {
+          cloudWatchMetricsEnabled: true,
+          sampledRequestsEnabled: true,
+          metricName: `CdkAcl${webAclScope}`,
         }
-      },
-      rules: ruleGroups,
-      visibilityConfig: {
-        cloudWatchMetricsEnabled: true,
-        sampledRequestsEnabled: true,
-        metricName: "CdkAcl",
-      }
+      })
     })
   }
 }
