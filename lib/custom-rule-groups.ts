@@ -57,13 +57,13 @@ export class CustomRuleGroups {
         ]
     }
 
-    public static defineRuleGroups(scope: Construct, regexMap: { [key: string]: string; }): wafv2.CfnRuleGroup[] {
+    public static defineRuleGroups(scope: Construct, regexMap: { [key: string]: string; }, ctxConfig: any): wafv2.CfnRuleGroup[] {
         return _
             .chain(CustomRuleGroups.ruleGroups(regexMap))
             .map(x => {
                 return new wafv2.CfnRuleGroup(scope, `RuleGroup${x.name}`, {
                     name: `RuleGroup${x.name}`,
-                    scope: "REGIONAL",
+                    scope: ctxConfig.wafScope,
                     capacity: x.capacity,
                     rules: [
                         {
@@ -110,9 +110,9 @@ export class CustomRuleGroups {
 
     }
 
-    public static webAclRuleStatments(scope: Construct): wafv2.CfnWebACL.RuleProperty[] {
-        let regexMap = RegularExpressions.defineRegularExpressions(scope)
-        let cfnRuleGroups = CustomRuleGroups.defineRuleGroups(scope, regexMap)
+    public static webAclRuleStatments(scope: Construct, ctxConfig: any): wafv2.CfnWebACL.RuleProperty[] {
+        let regexMap = RegularExpressions.defineRegularExpressions(scope, ctxConfig)
+        let cfnRuleGroups = CustomRuleGroups.defineRuleGroups(scope, regexMap, ctxConfig)
         return _
             .chain(cfnRuleGroups)
             .map(cfnRuleGroup =>
