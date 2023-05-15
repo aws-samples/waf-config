@@ -3,6 +3,7 @@ import { Construct } from 'constructs';
 import * as fs from 'fs';
 import _ = require('lodash');
 
+export type DefinedRegularExpressions = { [key: string]: string; }
 export class RegularExpressions {
 
     public name: string;
@@ -73,7 +74,7 @@ export class RegularExpressions {
 
     }
 
-    public static defineRegularExpressions(scope: Construct, ctxConfig: any): { [key: string]: string; } {
+    public static defineRegularExpressions(scope: Construct, ctxConfig: any): DefinedRegularExpressions {
         return _.chain(RegularExpressions.regex())
             .map(reg => {
                 let regex = new wafv2.CfnRegexPatternSet(scope, `RuleSet${reg.name}`, {

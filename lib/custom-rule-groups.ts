@@ -2,7 +2,8 @@ import * as wafv2 from 'aws-cdk-lib/aws-wafv2';
 import { Construct } from 'constructs';
 import _ = require('lodash');
 import { ManagedRuleGroups } from './managed-rule-groups';
-import { RegularExpressions } from './reqular-expressions';
+import { DefinedRegularExpressions, RegularExpressions } from './reqular-expressions';
+import { DefinedIpSets, IpRuleSets } from './ip-rule-sets';
 
 export class CustomRuleGroup {
     public name: string;
@@ -27,7 +28,7 @@ export class CustomRuleGroup {
 
 export class CustomRuleGroups {
     static basePriority = ManagedRuleGroups.managedRuleGroups.length
-    private static ruleGroups(regexMap: { [key: string]: string; }) {
+    private static ruleGroups(regexMap: DefinedRegularExpressions, ipSets: DefinedIpSets) {
         return [
             // Rate limit
             new CustomRuleGroup("RateLimit", 55, {
@@ -38,6 +39,12 @@ export class CustomRuleGroups {
             }, {
                 block: {}
             }),
+            // Placeholder developer op sets
+            new CustomRuleGroup("IntegrationTestOverride", 1, {
+                ipSetReferenceStatement: {
+                    arn: ipSets['IntegrationTesterOverideIpRuleSet'].attrArn
+                },
+            }, { allow: {} }),
             // Challange out of country
             new CustomRuleGroup("ChallangeOutOfIsrael", 55, {
                 notStatement: {
@@ -57,9 +64,9 @@ export class CustomRuleGroups {
         ]
     }
 
-    public static defineRuleGroups(scope: Construct, regexMap: { [key: string]: string; }, ctxConfig: any): wafv2.CfnRuleGroup[] {
+    public static defineRuleGroups(scope: Construct, regexMap: { [key: string]: string; }, ipSets: DefinedIpSets, ctxConfig: any): wafv2.CfnRuleGroup[] {
         return _
-            .chain(CustomRuleGroups.ruleGroups(regexMap))
+            .chain(CustomRuleGroups.ruleGroups(regexMap, ipSets))
             .map(x => {
                 return new wafv2.CfnRuleGroup(scope, `RuleGroup${x.name}`, {
                     name: `RuleGroup${x.name}`,
@@ -112,7 +119,9 @@ export class CustomRuleGroups {
 
     public static webAclRuleStatments(scope: Construct, ctxConfig: any): wafv2.CfnWebACL.RuleProperty[] {
         let regexMap = RegularExpressions.defineRegularExpressions(scope, ctxConfig)
-        let cfnRuleGroups = CustomRuleGroups.defineRuleGroups(scope, regexMap, ctxConfig)
+        let ipSets = IpRuleSets.defineIpRuleSets(scope, ctxConfig)
+        let cfnRuleGroups = CustomRuleGroups.defineRuleGroups(scope, regexMap, ipSets, ctxConfig)
+
         return _
             .chain(cfnRuleGroups)
             .map(cfnRuleGroup =>
