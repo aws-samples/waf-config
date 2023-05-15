@@ -9,14 +9,28 @@ export class WafrStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
+    const ctxConfig: any = {
+      wafScope: this.node.tryGetContext('wafScope') ? this.node.tryGetContext('wafScope') : 'REGIONAL'
+    }
+
+    // example run cdk cli with context
+    // cdk synth --context wafScope=REGIONAL
+    // cdk synth --context wafScope=CLOUDFRONT
+
+    //create web acl with custom and managed rule groups 
+    //https://docs.aws.amazon.com/cdk/api/latest/docs/aws-wafv2-readme.html#aws-wafv2-readme-web-acls-and-rules-overview
+    //https://docs.aws.amazon.com/cdk/api/latest/docs/aws-wafv2-readme.html#aws-wafv2-readme-web-acls-and-rules-overview-custom-rule-groups
+    //https://docs.aws.amazon.com/cdk/api/latest/docs/aws-wafv2-readme.html#aws-wafv2-readme-web-acls-and-rules-overview-managed-rule-groups
+
+    //create web acl with custom rule groups
     let ruleGroups =
       ManagedRuleGroups
         .webAclRuleStatments()
         .concat(
-          CustomRuleGroups.webAclRuleStatments(this))
+          CustomRuleGroups.webAclRuleStatments(this, ctxConfig))
 
     new wafv2.CfnWebACL(this, "CdkAcl", {
-      scope: "REGIONAL",
+      scope: ctxConfig.wafScope,
       defaultAction: {
         allow: {
         }
